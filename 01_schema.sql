@@ -1,0 +1,89 @@
+
+-- Reset
+IF OBJECT_ID('dbo.CaseStatus', 'U') IS NOT NULL DROP TABLE dbo.CaseStatus;
+IF OBJECT_ID('dbo.CaseQuotes', 'U') IS NOT NULL DROP TABLE dbo.CaseQuotes;
+IF OBJECT_ID('dbo.Cases', 'U') IS NOT NULL DROP TABLE dbo.Cases;
+IF OBJECT_ID('dbo.BuyerZipQuotes', 'U') IS NOT NULL DROP TABLE dbo.BuyerZipQuotes;
+IF OBJECT_ID('dbo.Buyers', 'U') IS NOT NULL DROP TABLE dbo.Buyers;
+IF OBJECT_ID('dbo.Cars', 'U') IS NOT NULL DROP TABLE dbo.Cars;
+IF OBJECT_ID('dbo.Submodels', 'U') IS NOT NULL DROP TABLE dbo.Submodels;
+IF OBJECT_ID('dbo.Models', 'U') IS NOT NULL DROP TABLE dbo.Models;
+IF OBJECT_ID('dbo.Makes', 'U') IS NOT NULL DROP TABLE dbo.Makes;
+IF OBJECT_ID('dbo.Customers', 'U') IS NOT NULL DROP TABLE dbo.Customers;
+IF OBJECT_ID('dbo.Statuses', 'U') IS NOT NULL DROP TABLE dbo.Statuses;
+IF OBJECT_ID('dbo.ZipCodes', 'U') IS NOT NULL DROP TABLE dbo.ZipCodes;
+
+GO
+
+CREATE TABLE Makes ( Id INT IDENTITY PRIMARY KEY, Name NVARCHAR(100) NOT NULL UNIQUE );
+CREATE TABLE Models ( Id INT IDENTITY PRIMARY KEY, MakeId INT NOT NULL, Name NVARCHAR(100) NOT NULL,
+					  CONSTRAINT FK_Models_Makes FOREIGN KEY (MakeId) REFERENCES Makes(Id),
+					  CONSTRAINT UX_Models UNIQUE (MakeId, Name) );
+
+CREATE TABLE Submodels ( Id INT IDENTITY PRIMARY KEY, ModelId INT NOT NULL, Name NVARCHAR(100) NOT NULL,
+						 CONSTRAINT FK_Submodels_Models FOREIGN KEY (ModelId) REFERENCES Models(Id),
+						 CONSTRAINT UX_Submodels UNIQUE (ModelId, Name) );
+
+CREATE TABLE ZipCodes ( Zip CHAR(10) PRIMARY KEY );
+
+CREATE TABLE Customers ( Id INT IDENTITY PRIMARY KEY, Name NVARCHAR(150) NOT NULL, Email NVARCHAR(200) NULL, 
+						 Phone NVARCHAR(50) NULL, Balance DECIMAL(12,2) NOT NULL DEFAULT 0 );
+
+CREATE TABLE Cars ( Id INT IDENTITY PRIMARY KEY, [Year] INT NOT NULL, MakeId INT NOT NULL, ModelId INT NOT NULL,
+					SubmodelId INT NOT NULL, 
+					CONSTRAINT FK_Cars_Models FOREIGN KEY (ModelId) REFERENCES Models(Id),
+					CONSTRAINT FK_Cars_Submodels FOREIGN KEY (SubmodelId) REFERENCES Submodels(Id) );
+
+CREATE TABLE Buyers ( Id INT IDENTITY PRIMARY KEY, Name NVARCHAR(150) NOT NULL UNIQUE );
+
+CREATE TABLE BuyerZipQuotes ( Id INT IDENTITY PRIMARY KEY, BuyerId INT NOT NULL, Zip CHAR(10) NOT NULL,
+							  Amount DECIMAL(12,2) NOT NULL, IsActive BIT NOT NULL DEFAULT 1,
+							  EffectiveFrom DATETIME2 NULL, EffectiveTo DATETIME2 NULL,
+							  CONSTRAINT FK_BZQ_Buyers FOREIGN KEY (BuyerId) REFERENCES Buyers(Id),
+							  CONSTRAINT FK_BZQ_Zips FOREIGN KEY (Zip) REFERENCES ZipCodes(Zip) );
+
+CREATE TABLE Cases ( Id INT IDENTITY PRIMARY KEY, CustomerId INT NOT NULL, CarId INT NOT NULL,
+					 Zip CHAR(10) NOT NULL, CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+					 CONSTRAINT FK_Cases_Customers FOREIGN KEY (CustomerId) REFERENCES Customers(Id),
+					 CONSTRAINT FK_Cases_Cars FOREIGN KEY (CarId) REFERENCES Cars(Id),
+					 CONSTRAINT FK_Cases_Zip FOREIGN KEY (Zip) REFERENCES ZipCOdes(Zip) );
+
+CREATE TABLE CaseQuotes ( Id INT IDENTITY PRIMARY KEY, CaseId INT NOT NULL, BuyerZipQuoteId INT NOT NULL,
+						  Amount DECIMAL(12,2) NOT NULL, IsCurrent BIT NOT NULL DEFAULT 0,
+						  CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+						  CONSTRAINT FK_CQ_Cases FOREIGN KEY (CaseId) REFERENCES Cases(Id),
+						  CONSTRAINT FK_CQ_BZQ FOREIGN KEY (BuyerZipQuoteId) REFERENCES BuyerZipQuotes(Id) );
+
+-- 1 Quote per case
+CREATE UNIQUE INDEX UX_CaseQuotes_Current ON CaseQuotes(CaseId) WHERE IsCurrent = 1;
+
+CREATE TABLE Statuses ( Id INT IDENTITY PRIMARY KEY, Name NVARCHAR(80) NOT NULL UNIQUE, 
+						RequiresStatusDate BIT NOT NULL DEFAULT 0 );
+
+CREATE TABLE CaseStatus ( Id INT IDENTITY PRIMARY KEY, CaseId INT NOT NULL, StatusId INT NOT NULL,
+						  StatusDate DATETIME2 NULL, ChangedBy NVARCHAR(100) NOT NULL,
+						  ChangedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+						  IsCurrent BIT NOT NULL DEFAULT 0,
+						  CONSTRAINT FK_CS_Cases FOREIGN KEY (CaseId) REFERENCES Cases(Id),
+						  CONSTRAINT FK_CS_Status FOREIGN KEY (StatusId) REFERENCES Statuses(Id) );
+
+-- 1 Status per case
+CREATE UNIQUE INDEX UX_CaseStatus_Current ON CaseStatus(CaseId) WHERE IsCurrent = 1;
+
+-- Pickud up or another must have date when RequiresStatusDate =1
+GO
+CREATE TRIGGER TR_CS_RequireDateForPickedUp ON CaseStatus AFTER INSERT, UPDATE AS
+BEGIN
+	IF EXISTS (
+		SELECT 1
+		FROM inserted i
+		JOIN Statuses s ON s.Id = i.StatusId
+		WHERE s.RequiresStatusDate = 1 AND i.StatusDate IS NULL
+		)
+		BEGIN
+			RAISERROR ('Status requires StatusDate.', 16, 1);
+			ROLLBACK TRANSACTION;
+			RETURN;
+		END
+	END
+GO

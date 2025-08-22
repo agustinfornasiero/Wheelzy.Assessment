@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36408.4 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wheelzy.API", "Wheelzy.API\Wheelzy.API.csproj", "{A1389015-ED80-4BAD-B6E9-F2740868EC58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wheelzy.Domain", "Wheelzy.Domain\Wheelzy.Domain.csproj", "{16416CFE-628F-4BD3-A490-51F90E104468}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wheelzy.Infrastructure", "Wheelzy.Infrastructure\Wheelzy.Infrastructure.csproj", "{A6EF6EF4-AA31-4658-AF5D-6C2E6309C5F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wheezy.CodeFixer", "Wheezy.CodeFixer\Wheezy.CodeFixer.csproj", "{05D7A421-863A-4441-893D-825653BAB87B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wheelzy.Application", "Wheelzy.Application\Wheelzy.Application.csproj", "{42D96CFA-9800-4A47-86E4-4C8471811D56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wheelzy.UnitTests", "Wheelzy.UnitTests\Wheelzy.UnitTests.csproj", "{224B5F0E-EB39-4F6A-91A6-86EE1107D690}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		01_schema.sql = 01_schema.sql
+		02_query_summary.sql = 02_query_summary.sql
+		03_seed.sql = 03_seed.sql
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1389015-ED80-4BAD-B6E9-F2740868EC58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1389015-ED80-4BAD-B6E9-F2740868EC58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1389015-ED80-4BAD-B6E9-F2740868EC58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1389015-ED80-4BAD-B6E9-F2740868EC58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16416CFE-628F-4BD3-A490-51F90E104468}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16416CFE-628F-4BD3-A490-51F90E104468}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16416CFE-628F-4BD3-A490-51F90E104468}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16416CFE-628F-4BD3-A490-51F90E104468}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6EF6EF4-AA31-4658-AF5D-6C2E6309C5F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6EF6EF4-AA31-4658-AF5D-6C2E6309C5F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6EF6EF4-AA31-4658-AF5D-6C2E6309C5F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6EF6EF4-AA31-4658-AF5D-6C2E6309C5F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05D7A421-863A-4441-893D-825653BAB87B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05D7A421-863A-4441-893D-825653BAB87B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05D7A421-863A-4441-893D-825653BAB87B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05D7A421-863A-4441-893D-825653BAB87B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42D96CFA-9800-4A47-86E4-4C8471811D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42D96CFA-9800-4A47-86E4-4C8471811D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42D96CFA-9800-4A47-86E4-4C8471811D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42D96CFA-9800-4A47-86E4-4C8471811D56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{224B5F0E-EB39-4F6A-91A6-86EE1107D690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{224B5F0E-EB39-4F6A-91A6-86EE1107D690}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{224B5F0E-EB39-4F6A-91A6-86EE1107D690}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{224B5F0E-EB39-4F6A-91A6-86EE1107D690}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {54A9F20A-8328-4BD0-BA3B-9824F4E5A8D7}
+	EndGlobalSection
+EndGlobal
