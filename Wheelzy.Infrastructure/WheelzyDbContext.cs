@@ -21,6 +21,7 @@ namespace Wheelzy.Infrastructure
         public DbSet<CaseQuote> CaseQuotes => Set<CaseQuote>();
         public DbSet<Status> Statuses => Set<Status>();
         public DbSet<CaseStatus> CaseStatuses => Set<CaseStatus>();
+        public DbSet<Order> Orders => Set<Order>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

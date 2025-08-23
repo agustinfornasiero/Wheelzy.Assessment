@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Wheelzy.Domain\Wheelzy.Domain.csproj" />
+    <ProjectReference Include="..\Wheelzy.Infrastructure\Wheelzy.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
