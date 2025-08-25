@@ -15,9 +15,9 @@ namespace Wheelzy.Application.Services
         {
             IQueryable<Order> q = _db.Orders.AsNoTracking();
 
-            if(dateFrom.HasValue) q = q.Where(o => o.Date >= dateFrom.Value);
+            if(dateFrom.HasValue) q = q.Where(o => o.OrderDate >= dateFrom.Value);
 
-            if(dateTo.HasValue) q = q.Where(o => o.Date <= dateTo.Value);
+            if(dateTo.HasValue) q = q.Where(o => o.OrderDate <= dateTo.Value);
 
             if (customerIds is { Count: > 0 })
                 q = q.Where(o => customerIds.Contains(o.CustomerId));
@@ -28,8 +28,8 @@ namespace Wheelzy.Application.Services
             if(isActive.HasValue)
                 q = q.Where(o => o.IsActive == isActive.Value);
 
-            return await q.OrderByDescending(o => o.Date).Select(o => new OrderDto {Id = o.Id,
-            Date = o.Date, CustomerId = o.CustomerId, StatusId = o.StatusId, IsActive = o.IsActive})
+            return await q.OrderByDescending(o => o.OrderDate).Select(o => new OrderDto {Id = o.Id,
+            Date = o.OrderDate, CustomerId = o.CustomerId, StatusId = o.StatusId, IsActive = o.IsActive})
                 .ToListAsync(ct);
 
         }

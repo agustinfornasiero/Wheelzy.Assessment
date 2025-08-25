@@ -5,39 +5,51 @@ using Wheelzy.Infrastructure;
 
 namespace Wheelzy.Application.Commands.CreateCase
 {
-    public class CreatrCaseHandler
+    public class CreateCaseHandler
     {
         private readonly WheelzyDbContext _db;
-        public CreatrCaseHandler(WheelzyDbContext db) => _db = db;
 
-        public async Task<int> Handle(CreateCaseCommand cmd, CancellationToken cancellationToken = default)
+        public CreateCaseHandler(WheelzyDbContext db)
         {
-            var caze = new Case { CustomerId = cmd.CustomerId, CarId = cmd.CarId, Zip = cmd.Zip };
-
-            var candidates = await _db.BuyerZipQuotes.Where(b => b.Zip == cmd.Zip &&
-                                                            b.IsActive &&
-                                                            (b.EffectiveFrom == null || b.EffectiveFrom <= DateTime.UtcNow)
-                                                            && (b.EffectiveTo == null || b.EffectiveTo >= DateTime.UtcNow))
-                                                            .ToListAsync(cancellationToken);
-
-            foreach (var z in candidates)
-                 caze.CaseQuotes.Add(new CaseQuote { BuyerZipQuoteId = z.Id, Amount = z.Amount });
-
-            var current = caze.CaseQuotes.OrderByDescending(q => q.Amount).FirstOrDefault();
-            if (current is not null)
-                current.IsCurrent = true;
-
-            caze.CaseStatuses.Add(new CaseStatus { StatusId = 1, IsCurrent = true, ChangedBy = "system" });
-
-            _db.Cases.Add(caze);
-
-            await _db.SaveChangesAsync(cancellationToken);
-
-            return caze.Id;
-
-            
+            _db = db;
         }
 
+        public async Task<int> Handle(CreateCaseCommand request, CancellationToken cancellationToken)
+        {
+            // 1) Crear Case
+            var newCase = new Case
+            {
+                CustomerId = request.CustomerId,
+                CarId = request.CarId,
+                Zip = request.Zip,
+                CreatedAt = DateTime.UtcNow
+            };
+            _db.Cases.Add(newCase);
+            await _db.SaveChangesAsync(cancellationToken);
 
+            // 2) Obtener status "New"
+            var statusNew = await _db.Statuses
+                .Where(s => s.Name == "New")
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (statusNew == null)
+                throw new InvalidOperationException("No existe el estado inicial 'New' en la tabla Statuses.");
+
+            // 3) Insertar CaseStatus inicial
+            var caseStatus = new CaseStatus
+            {
+                CaseId = newCase.Id,
+                StatusId = statusNew.Id,
+                StatusDate = null, // New no lo requiere
+                ChangedBy = "system",
+                IsCurrent = true,
+                ChangedAt = DateTime.UtcNow
+            };
+            _db.CaseStatuses.Add(caseStatus);
+            await _db.SaveChangesAsync(cancellationToken);
+
+            return newCase.Id;
+        }
     }
+
 }

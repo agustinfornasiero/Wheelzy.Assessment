@@ -1,4 +1,4 @@
-INSERT INTO Statuses(Name, RequireStatusDate) 
+INSERT INTO Statuses(Name, RequiresStatusDate) 
 	VALUES('Pending Acceptance', 0), ('Accepted', 0), ('Picked Up', 1);
 
 INSERT INTO ZipCodes(Zip) VALUES ('33101'), ('33102');

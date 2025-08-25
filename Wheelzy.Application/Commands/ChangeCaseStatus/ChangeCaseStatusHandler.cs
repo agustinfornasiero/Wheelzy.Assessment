@@ -15,7 +15,7 @@ namespace Wheelzy.Application.Commands.ChangeCaseStatus
             c.Id == cmd.CaseId, cancellationToken);
             if (caze is null) return false;
 
-            var requiresDate = await _db.Statuses.Where(s => s.Id == cmd.StatusId).Select(s => s.RequireStatusDate).FirstOrDefaultAsync(cancellationToken);
+            var requiresDate = await _db.Statuses.Where(s => s.Id == cmd.StatusId).Select(s => s.RequiresStatusDate).FirstOrDefaultAsync(cancellationToken);
             if (requiresDate && cmd.StatusDate is null) throw new InvalidOperationException("StatusDate is required for this state.");
 
             foreach (var s in caze.CaseStatuses.Where(s => s.IsCurrent))

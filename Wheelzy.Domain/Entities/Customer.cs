@@ -8,5 +8,6 @@ namespace Wheelzy.Domain.Entities
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public decimal Balance { get; set; }
+        public ICollection<Order> Orders { get; set; }
     }
 }
